@@ -1,10 +1,7 @@
 package org;
 
-import org.MusicPlayer;
-
-import javax.sound.sampled.*;
-
-import java.io.File;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
@@ -13,17 +10,11 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("My music player");
 
-        // resp;ve file path
-        String filePath = "audio/Savin-Me-Nickelback.wav";
-        File file = new File(filePath);
-
-        try (AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
-             Scanner scanner = new Scanner(System.in);) {
-
-            // access the audio clip
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
-
+        try (Scanner scanner = new Scanner(System.in)) {
+            // set song file path
+            String filePath = "audio/Savin-Me-Nickelback.wav";
+            // create a music player for the song
+            MusicPlayer player = new MusicPlayer(filePath);
             // response loop
             String response ="";
             while(!response.equals("Q")) {
@@ -37,11 +28,12 @@ public class Main {
                 System.out.print("Enter your selection: ");
                 response = scanner.next().toUpperCase();
 
+                // manage responses
                 switch (response) {
-                    case "P" -> clip.start();
-                    case "S" -> clip.stop();
-                    case "R" -> clip.setFramePosition(0);
-                    case "Q" -> clip.close();
+                    case "P" -> player.play();
+                    case "S" -> player.stop();
+                    case "R" -> player.reset();
+                    case "Q" -> player.close();
                     default -> System.out.println("Invalid input!");
                 }
             }
@@ -56,6 +48,5 @@ public class Main {
         } finally {
             System.out.println("Thanks for playing");
         }
-
     }
 }
